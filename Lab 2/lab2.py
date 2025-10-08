@@ -4,26 +4,18 @@ import math
 import heapq
 import matplotlib.pyplot as plt
 
+#region graph building
 # =========================
 # Graph builders
 # =========================
 
 def make_adjacency_matrix(n, m):
-    #Cgeck for self loops and no duplicate edges
-    if m > n * (n - 1) // 2:
+    # Check for self loops and no duplicate edges
+    if m > (n * (n - 1)) // 2:
         raise ValueError("Too many edges for a simple undirected graph.")
 
     # initialize matrix of zeros (n x n)
-    M = []
-    i = 0
-    while i < n:
-        row = []
-        j = 0
-        while j < n:
-            row.append(0)
-            j += 1
-        M.append(row)
-        i += 1
+    M = [[0] * n for _ in range(n)]
 
     # Track used undirected edges as a list of (a,b) with a<b
     used_edges = []
@@ -59,7 +51,6 @@ def make_adjacency_matrix(n, m):
 
     return M
 
-
 def matrix_to_adjlist(M):
     """Convert adjacency matrix → adjacency list for the EXACT same graph (undirected)."""
     n = len(M)
@@ -82,8 +73,9 @@ def matrix_to_adjlist(M):
         u += 1
 
     return adj
+#endregion
 
-
+#region dijkstra implementation
 # =========================
 # Dijkstra implementations
 # =========================
@@ -168,8 +160,9 @@ def dijkstra_adjlist_heap(adj, start=0):
             j += 1
 
     return dist
+#endregion
 
-
+#region util functions
 # =========================
 # Timing & theory helpers
 # =========================
@@ -296,7 +289,15 @@ def scaled_theory_B(points):
 
     return vs, y_theory
 
+def get_vertex_list(start: int, stop: int, step:int) -> list:
+    ret = []
+    for i in range(start, stop + 1, step):
+        ret.append(i);
+    
+    return ret;
+#endregion
 
+#region part a
 # =========================
 # Part (a) plot
 # =========================
@@ -322,12 +323,12 @@ def run_part_a_plot(A_pts):
     plt.legend()
     plt.tight_layout()
     plt.show()
+#endregion
 
-
+#region part b
 # =========================
 # Part (b) plot
 # =========================
-
 def run_part_b_plot(B_pts):
     vs = [] #x-axis
     emp = [] #y-axis
@@ -349,7 +350,7 @@ def run_part_b_plot(B_pts):
     plt.legend()
     plt.tight_layout()
     plt.show()
-
+#endregion
 
 # =========================
 # Main
@@ -357,7 +358,8 @@ def run_part_b_plot(B_pts):
 
 if __name__ == "__main__":
     # Test sizes and trials
-    n_list = [200, 400, 800, 1600, 3200]
+    # n_list = [200, 400, 800, 1600, 3200]
+    # n_list = get_vertex_list(10, 100, 10);
 
     trials = 3
 
