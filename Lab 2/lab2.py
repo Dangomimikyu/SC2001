@@ -194,7 +194,7 @@ def measure_both_on_same_graphs(n_list, trials):
     while idx < len(n_list):
         n = n_list[idx]
         m = m_of_n(n)
-        e_dir = 2 * m
+        e_dir = m
         sumA = 0.0
         sumB = 0.0
 
@@ -204,11 +204,11 @@ def measure_both_on_same_graphs(n_list, trials):
             adj = matrix_to_adjlist(M)
 
             t0 = time.perf_counter() 
-            _ = dijkstra_matrix_array(M, start=0) #_ is used here to ignore output
+            _ = dijkstra_matrix_array(M, start=0) # _ is used here to ignore output
             sumA += time.perf_counter() - t0
 
             t0 = time.perf_counter()
-            _ = dijkstra_adjlist_heap(adj, start=0) #_ is used here to ignore output
+            _ = dijkstra_adjlist_heap(adj, start=0) # _ is used here to ignore output
             sumB += time.perf_counter() - t0
 
             t += 1
@@ -360,6 +360,7 @@ if __name__ == "__main__":
     # Test sizes and trials
     # n_list = [200, 400, 800, 1600, 3200]
     # n_list = get_vertex_list(10, 100, 10);
+    n_list = get_vertex_list(1000, 10000, 1000)
 
     trials = 3
 
