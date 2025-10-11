@@ -52,7 +52,7 @@ def make_adjacency_matrix(n, m):
     return M
 
 def matrix_to_adjlist(M):
-    """Convert adjacency matrix → adjacency list for the EXACT same graph (undirected)."""
+    #Convert adjacency matrix → adjacency list for the EXACT same graph (undirected).
     n = len(M)
 
     adj = []
@@ -81,7 +81,7 @@ def matrix_to_adjlist(M):
 # =========================
 
 def dijkstra_matrix_array(M, start=0):
-    """(a) Matrix + array scan PQ (linear extract-min)."""
+    #(a) Adjacency Matrix + array scan Priority queue.
     n = len(M)
 
     dist = []
@@ -108,7 +108,7 @@ def dijkstra_matrix_array(M, start=0):
             break
         vis[u] = True
 
-        # relax neighbors
+        # update neighbors if a shorter path is found
         v = 0
         while v < n:
             w = M[u][v]
@@ -123,7 +123,7 @@ def dijkstra_matrix_array(M, start=0):
 
 
 def dijkstra_adjlist_heap(adj, start=0):
-    """(b) Adjacency list + min-heap PQ (heapq)."""
+    #(b) Adjacency list + min-heap Priority Queue (heapq)
     n = len(adj)
 
     dist = []
@@ -180,7 +180,9 @@ def m_of_n(n):
 
 
 def measure_both_on_same_graphs(n_list, trials):
-    ''' /*
+    
+    # trials is used for averaging time over multiple runs
+    '''
     For each n and each trial:
       - Build ONE matrix graph with m_of_n(n) edges
       - Convert to list (same edges)
@@ -225,7 +227,7 @@ def measure_both_on_same_graphs(n_list, trials):
 
 
 def scaled_theory_A(points):
-    # O(V^2), scaled to the first empirical point. 
+    # O(V^2), scaled to the first empirical point
     vs = []
     ys = []
     i = 0
@@ -255,7 +257,7 @@ def scaled_theory_A(points):
 
 
 def scaled_theory_B(points):
-    #O((V+E) log V), scaled to the first empirical point (E = directed count = 2*m). 
+    #O((V+E) log V), scaled to the first empirical point
     vs = []
     Es = []
     ys = []
@@ -271,8 +273,8 @@ def scaled_theory_B(points):
 
     v0 = vs[0]
     e0 = Es[0]
-    base_log = math.log(max(2, v0), 2)
-    base0 = (v0 + e0) * base_log
+    base_log = math.log(max(2, v0), 2) #log2 V
+    base0 = (v0 + e0) * base_log #(V+E) * log2(V) first point
     if base0 > 0:
         c = ys[0] / base0
     else:
@@ -283,8 +285,8 @@ def scaled_theory_B(points):
     while i < len(vs):
         v = vs[i]
         e = Es[i]
-        val = (v + e) * math.log(max(2, v), 2)
-        y_theory.append(c * val)
+        val = (v + e) * math.log(max(2, v), 2) # (V+E) log(V)
+        y_theory.append(c * val) # c * (V+E) log(V) to scale the points
         i += 1
 
     return vs, y_theory
@@ -292,9 +294,9 @@ def scaled_theory_B(points):
 def get_vertex_list(start: int, stop: int, step:int) -> list:
     ret = []
     for i in range(start, stop + 1, step):
-        ret.append(i);
+        ret.append(i)
     
-    return ret;
+    return ret
 #endregion
 
 #region part a
