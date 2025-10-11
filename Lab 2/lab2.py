@@ -172,7 +172,7 @@ def m_of_n(n):
     # ensure at least n-1 edges for a tendency toward connectivity
     # larger c denotes fewer edges → sparser
     # lower c denotes more edges → denser
-    c = 4
+    c = 6
     m_candidate = c * n
     if m_candidate < n - 1:
         return n - 1
