@@ -170,9 +170,9 @@ def dijkstra_adjlist_heap(adj, start=0):
 def m_of_n(n):
     # Choose |E| as a function of |V| to ensure sparse but connected graphs.
     # ensure at least n-1 edges for a tendency toward connectivity
-    # larger c denotes fewer edges → sparser
-    # lower c denotes more edges → denser
-    c = 6
+    # Smaller c denotes fewer edges → sparser
+    # Larger c denotes more edges → denser
+    c = 8
     m_candidate = c * n
     if m_candidate < n - 1:
         return n - 1
@@ -362,7 +362,8 @@ if __name__ == "__main__":
     # Test sizes and trials
     # n_list = [200, 400, 800, 1600, 3200]
     # n_list = get_vertex_list(10, 100, 10);
-    n_list = get_vertex_list(1000, 10000, 1000)
+    # n_list = get_vertex_list(1000, 10000, 1000)
+    n_list = get_vertex_list(25, 1000, 25)
 
     trials = 3
 
