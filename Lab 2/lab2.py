@@ -4,26 +4,18 @@ import math
 import heapq
 import matplotlib.pyplot as plt
 
+#region graph building
 # =========================
 # Graph builders
 # =========================
 
 def make_adjacency_matrix(n, m):
-    #Cgeck for self loops and no duplicate edges
-    if m > n * (n - 1) // 2:
+    # Check for self loops and no duplicate edges
+    if m > (n * (n - 1)) // 2:
         raise ValueError("Too many edges for a simple undirected graph.")
 
     # initialize matrix of zeros (n x n)
-    M = []
-    i = 0
-    while i < n:
-        row = []
-        j = 0
-        while j < n:
-            row.append(0)
-            j += 1
-        M.append(row)
-        i += 1
+    M = [[0] * n for _ in range(n)]
 
     # Track used undirected edges as a list of (a,b) with a<b
     used_edges = []
@@ -59,9 +51,8 @@ def make_adjacency_matrix(n, m):
 
     return M
 
-
 def matrix_to_adjlist(M):
-    """Convert adjacency matrix → adjacency list for the EXACT same graph (undirected)."""
+    #Convert adjacency matrix → adjacency list for the EXACT same graph (undirected).
     n = len(M)
 
     adj = []
@@ -82,14 +73,15 @@ def matrix_to_adjlist(M):
         u += 1
 
     return adj
+#endregion
 
-
+#region dijkstra implementation
 # =========================
 # Dijkstra implementations
 # =========================
 
 def dijkstra_matrix_array(M, start=0):
-    """(a) Matrix + array scan PQ (linear extract-min)."""
+    #(a) Adjacency Matrix + array scan Priority queue.
     n = len(M)
 
     dist = []
@@ -116,7 +108,7 @@ def dijkstra_matrix_array(M, start=0):
             break
         vis[u] = True
 
-        # relax neighbors
+        # update neighbors if a shorter path is found
         v = 0
         while v < n:
             w = M[u][v]
@@ -131,7 +123,7 @@ def dijkstra_matrix_array(M, start=0):
 
 
 def dijkstra_adjlist_heap(adj, start=0):
-    """(b) Adjacency list + min-heap PQ (heapq)."""
+    #(b) Adjacency list + min-heap Priority Queue (heapq)
     n = len(adj)
 
     dist = []
@@ -168,8 +160,9 @@ def dijkstra_adjlist_heap(adj, start=0):
             j += 1
 
     return dist
+#endregion
 
-
+#region util functions
 # =========================
 # Timing & theory helpers
 # =========================
@@ -177,9 +170,9 @@ def dijkstra_adjlist_heap(adj, start=0):
 def m_of_n(n):
     # Choose |E| as a function of |V| to ensure sparse but connected graphs.
     # ensure at least n-1 edges for a tendency toward connectivity
-    # larger c denotes fewer edges → sparser
-    # lower c denotes more edges → denser
-    c = 4
+    # Smaller c denotes fewer edges → sparser
+    # Larger c denotes more edges → denser
+    c = 8
     m_candidate = c * n
     if m_candidate < n - 1:
         return n - 1
@@ -187,7 +180,9 @@ def m_of_n(n):
 
 
 def measure_both_on_same_graphs(n_list, trials):
-    ''' /*
+    
+    # trials is used for averaging time over multiple runs
+    '''
     For each n and each trial:
       - Build ONE matrix graph with m_of_n(n) edges
       - Convert to list (same edges)
@@ -201,7 +196,7 @@ def measure_both_on_same_graphs(n_list, trials):
     while idx < len(n_list):
         n = n_list[idx]
         m = m_of_n(n)
-        e_dir = 2 * m
+        e_dir = m
         sumA = 0.0
         sumB = 0.0
 
@@ -211,11 +206,11 @@ def measure_both_on_same_graphs(n_list, trials):
             adj = matrix_to_adjlist(M)
 
             t0 = time.perf_counter() 
-            _ = dijkstra_matrix_array(M, start=0) #_ is used here to ignore output
+            _ = dijkstra_matrix_array(M, start=0) # _ is used here to ignore output
             sumA += time.perf_counter() - t0
 
             t0 = time.perf_counter()
-            _ = dijkstra_adjlist_heap(adj, start=0) #_ is used here to ignore output
+            _ = dijkstra_adjlist_heap(adj, start=0) # _ is used here to ignore output
             sumB += time.perf_counter() - t0
 
             t += 1
@@ -232,7 +227,7 @@ def measure_both_on_same_graphs(n_list, trials):
 
 
 def scaled_theory_A(points):
-    # O(V^2), scaled to the first empirical point. 
+    # O(V^2), scaled to the first empirical point
     vs = []
     ys = []
     i = 0
@@ -262,7 +257,7 @@ def scaled_theory_A(points):
 
 
 def scaled_theory_B(points):
-    #O((V+E) log V), scaled to the first empirical point (E = directed count = 2*m). 
+    #O((V+E) log V), scaled to the first empirical point
     vs = []
     Es = []
     ys = []
@@ -278,8 +273,8 @@ def scaled_theory_B(points):
 
     v0 = vs[0]
     e0 = Es[0]
-    base_log = math.log(max(2, v0), 2)
-    base0 = (v0 + e0) * base_log
+    base_log = math.log(max(2, v0), 2) #log2 V
+    base0 = (v0 + e0) * base_log #(V+E) * log2(V) first point
     if base0 > 0:
         c = ys[0] / base0
     else:
@@ -290,13 +285,21 @@ def scaled_theory_B(points):
     while i < len(vs):
         v = vs[i]
         e = Es[i]
-        val = (v + e) * math.log(max(2, v), 2)
-        y_theory.append(c * val)
+        val = (v + e) * math.log(max(2, v), 2) # (V+E) log(V)
+        y_theory.append(c * val) # c * (V+E) log(V) to scale the points
         i += 1
 
     return vs, y_theory
 
+def get_vertex_list(start: int, stop: int, step:int) -> list:
+    ret = []
+    for i in range(start, stop + 1, step):
+        ret.append(i)
+    
+    return ret
+#endregion
 
+#region part a
 # =========================
 # Part (a) plot
 # =========================
@@ -322,12 +325,12 @@ def run_part_a_plot(A_pts):
     plt.legend()
     plt.tight_layout()
     plt.show()
+#endregion
 
-
+#region part b
 # =========================
 # Part (b) plot
 # =========================
-
 def run_part_b_plot(B_pts):
     vs = [] #x-axis
     emp = [] #y-axis
@@ -349,7 +352,7 @@ def run_part_b_plot(B_pts):
     plt.legend()
     plt.tight_layout()
     plt.show()
-
+#endregion
 
 # =========================
 # Main
@@ -357,7 +360,10 @@ def run_part_b_plot(B_pts):
 
 if __name__ == "__main__":
     # Test sizes and trials
-    n_list = [200, 400, 800, 1600, 3200]
+    # n_list = [200, 400, 800, 1600, 3200]
+    # n_list = get_vertex_list(10, 100, 10);
+    # n_list = get_vertex_list(1000, 10000, 1000)
+    n_list = get_vertex_list(25, 1000, 25)
 
     trials = 3
 
